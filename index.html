@@ -1,71 +1,118 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul class="comments">
+      <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
         </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div class="add-form">
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name__txt" ; />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+        id="comment__txt"></textarea>
+      <div class="add-form-row">
+        <button id="comment__btn" class="add-form-button">Написать</button>
       </div>
     </div>
-  </body>
-
+  </div>
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    document.addEventListener('DOMContentLoaded', () => { // Это мне нееёро сетка подказала
+      // Находим элементы в HTML  gj ID и классу
+      const nameInput = document.getElementById('name__txt');
+      const commentInput = document.getElementById('comment__txt');
+      const commentBtn = document.getElementById('comment__btn');
+      const commentList = document.querySelector('.comments');
+      // Функция для  добавдения текущей даты
+      function getCurrentDate() {
+        const date = new Date();
+        return `${date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit' })} ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
+      }
+
+
+      // Создаём событие для  кнопки
+      commentBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        const currentName = nameInput.value.trim(); // trim  для удаления пробелов
+        const currentComment = commentInput.value.trim();
+        // сообщение если поля не заполнены
+        if (!currentName || !currentComment) {
+          alert('Пожалуйста, заполните все поля');
+          return;
+        }
+
+        //  шаблон нового комментария
+        const newCommentHTML = `
+            <li class="comment">
+                <div class="comment-header">
+                    <div>${currentName}</div>
+                    <div>${getCurrentDate()}</div>
+                </div>
+                <div class="comment-body">
+                    <div class="comment-text">
+                        ${currentComment}
+                    </div>
+                    </div>
+                <div class="comment-footer">
+                    <div class="likes">
+                        <span class="likes-counter">0</span>
+                        <button class="like-button"></button>
+                    </div>
+                </div>
+            </li>
+        `;
+        // создаём временный контейнер
+        const tempContainer = document.createElement('div');
+        // помещаем в  контейнер контент - который мы  ввели
+        tempContainer.innerHTML = newCommentHTML;
+        // выгружаем контейнер в html
+        commentList.appendChild(tempContainer.firstElementChild);
+        // обновляем значение строк в  новом  комментарии 
+        nameInput.value = '';
+        commentInput.value = '';
+      });
+    });
   </script>
+</body>
+
+
 </html>
