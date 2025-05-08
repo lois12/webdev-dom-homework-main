@@ -9,110 +9,121 @@
 
 <body>
   <div class="container">
-    <ul class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
-    </ul>
+    <ul class="comments"></ul>
     <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name__txt" ; />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
-        id="comment__txt"></textarea>
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name__txt">
+      <textarea class="add-form-text" placeholder="Введите ваш комментарий" rows="4" id="comment__txt"></textarea>
       <div class="add-form-row">
         <button id="comment__btn" class="add-form-button">Написать</button>
       </div>
     </div>
   </div>
   <script>
-    document.addEventListener('DOMContentLoaded', () => { // Это мне нееёро сетка подказала
-      // Находим элементы в HTML  gj ID и классу
+    document.addEventListener('DOMContentLoaded', () => {
+      const commentsArray = [
+        {
+          id: 1,
+          name: 'Глеб Фокин',
+          text: 'Это будет первый комментарий на странице',
+          date: '12.02.22 12:18',
+          likes: 1023,
+          isLiked: true
+        },
+        {
+          id: 2,
+          name: 'Варвара Н.',
+          text: 'Мне нравится как оформлена страница',
+          date: '13.02.22 19:22',
+          likes: 3,
+          isLiked: true
+        }
+      ];
+
       const nameInput = document.getElementById('name__txt');
       const commentInput = document.getElementById('comment__txt');
       const commentBtn = document.getElementById('comment__btn');
       const commentList = document.querySelector('.comments');
-      // Функция для  добавдения текущей даты
+
       function getCurrentDate() {
         const date = new Date();
         return `${date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit' })} ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
       }
 
+      // Функция создания HTML-разметки для нового комментария
+      function createCommentHTML(comment) {
+        return `
+ <li class="comment" data-id="${comment.id}">
+ <div class="comment-header">
+ <div>${comment.name}</div>
+ <div>${comment.date}</div>
+ </div>
+ <div class="comment-body">
+ <div class="comment-text">
+ ${comment.text}
+ </div>
+ </div>
+ <div class="comment-footer">
+ <div class="likes">
+ <span class="likes-counter">${comment.likes}</span>
+ <button class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
+ </div>
+ </div>
+ </li>
+ `;
+      }
 
-      // Создаём событие для  кнопки
+      // Функция обновления комментариев
+      function updateComments() {
+        commentList.innerHTML = commentsArray.map(createCommentHTML).join('');
+      }
+
+      // Обработчик кликов по лайкам
+      commentList.addEventListener('click', (event) => {
+        if (event.target.classList.contains('like-button')) {
+          const commentElement = event.target.closest('.comment');
+          const commentId = parseInt(commentElement.dataset.id);
+          const commentIndex = commentsArray.findIndex(c => c.id === commentId);
+
+          if (commentIndex !== -1) {
+            const comment = commentsArray[commentIndex];
+            comment.isLiked = !comment.isLiked;
+            comment.likes += comment.isLiked ? 1 : -1;
+            updateComments();
+          }
+        }
+      });
+
+      // Обработчик добавления нового комментария
       commentBtn.addEventListener('click', (event) => {
         event.preventDefault();
-
-        const currentName = nameInput.value.trim(); // trim  для удаления пробелов
+        const currentName = nameInput.value.trim();
         const currentComment = commentInput.value.trim();
-        // сообщение если поля не заполнены
+
         if (!currentName || !currentComment) {
           alert('Пожалуйста, заполните все поля');
           return;
         }
 
-        //  шаблон нового комментария
-        const newCommentHTML = `
-            <li class="comment">
-                <div class="comment-header">
-                    <div>${currentName}</div>
-                    <div>${getCurrentDate()}</div>
-                </div>
-                <div class="comment-body">
-                    <div class="comment-text">
-                        ${currentComment}
-                    </div>
-                    </div>
-                <div class="comment-footer">
-                    <div class="likes">
-                        <span class="likes-counter">0</span>
-                        <button class="like-button"></button>
-                    </div>
-                </div>
-            </li>
-        `;
-        // создаём временный контейнер
-        const tempContainer = document.createElement('div');
-        // помещаем в  контейнер контент - который мы  ввели
-        tempContainer.innerHTML = newCommentHTML;
-        // выгружаем контейнер в html
-        commentList.appendChild(tempContainer.firstElementChild);
-        // обновляем значение строк в  новом  комментарии 
+        const newComment = {
+          id: Date.now(),
+          name: currentName,
+          text: currentComment,
+          date: getCurrentDate(),
+          likes: 0,
+          isLiked: false
+        };
+
+        commentsArray.push(newComment);
+        updateComments();
+
         nameInput.value = '';
         commentInput.value = '';
       });
+
+      // Инициализация при загрузке страницы
+      updateComments();
     });
   </script>
 </body>
-
 
 </html>
