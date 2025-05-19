@@ -136,10 +136,10 @@ body {
     opacity: 0.9;
   }
 
-  .like-button {
+  .like-button svg path {
     color: gray;
 }
 
-.like-button.liked {
+.like-button.liked svg path {
     color: red;
 }

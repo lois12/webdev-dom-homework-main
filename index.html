@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <title>Проект "Комменты"</title>
   <meta charset="utf-8" />
   <link rel="stylesheet" href="styles.css" />
+
 </head>
 
 <body>
@@ -14,25 +15,26 @@
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name__txt">
       <textarea class="add-form-text" placeholder="Введите ваш комментарий" rows="4" id="comment__txt"></textarea>
       <div class="add-form-row">
-        <button id="comment__btn" class="add-form-button">Написать</button>
+        <button id="comment__btn" class="add-form-button">Отправить</button>
       </div>
     </div>
   </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const commentsArray = [
         {
           id: 1,
-          name: 'Глеб Фокин',
-          text: 'Это будет первый комментарий на странице',
+          name: 'Иван Иванов',
+          text: 'Первый комментарий!',
           date: '12.02.22 12:18',
           likes: 1023,
           isLiked: true
         },
         {
           id: 2,
-          name: 'Варвара Н.',
-          text: 'Мне нравится как оформлена страница',
+          name: 'Марина Петрова',
+          text: 'Хорошее начало!',
           date: '13.02.22 19:22',
           likes: 3,
           isLiked: true
@@ -46,36 +48,57 @@
 
       function getCurrentDate() {
         const date = new Date();
-        return `${date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit' })} ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
+        return `${date.toLocaleDateString('ru-RU')} ${date.toLocaleTimeString('ru-RU')}`;
       }
 
-      // Функция создания HTML-разметки для нового комментария
       function createCommentHTML(comment) {
         return `
- <li class="comment" data-id="${comment.id}">
- <div class="comment-header">
- <div>${comment.name}</div>
- <div>${comment.date}</div>
- </div>
- <div class="comment-body">
- <div class="comment-text">
- ${comment.text}
- </div>
- </div>
- <div class="comment-footer">
- <div class="likes">
- <span class="likes-counter">${comment.likes}</span>
- <button class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
- </div>
- </div>
- </li>
- `;
+      <li class="comment" data-id="${comment.id}">
+        <div class="comment-header">
+          <div>${comment.name}</div>
+          <div>${comment.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${comment.text}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likes}</span>
+            <button class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
+          </div>
+        </div>
+      </li>
+    `;
       }
 
-      // Функция обновления комментариев
       function updateComments() {
         commentList.innerHTML = commentsArray.map(createCommentHTML).join('');
       }
+
+      function cleanHtml(text) {
+        return text.replace(/</g, "<").replace(/>/g, ">");
+      }
+
+      function replyToComment(commentId) {
+        const comment = commentsArray.find(c => c.id === commentId);
+        if (comment) {
+          nameInput.value = comment.name;
+          commentInput.value = `${comment.name}: ${cleanHtml(comment.text)}\n\n`;
+          commentInput.focus();
+        }
+      }
+
+      // Назначаем обработчик кликов на комментарии
+      commentList.addEventListener('click', (event) => {
+        const target = event.target;
+        if (target.classList.contains('comment-text')) {
+          const commentElement = target.closest('.comment');
+          const commentId = parseInt(commentElement.dataset.id);
+          replyToComment(commentId);
+        }
+      });
 
       // Обработчик кликов по лайкам
       commentList.addEventListener('click', (event) => {
@@ -97,7 +120,7 @@
       commentBtn.addEventListener('click', (event) => {
         event.preventDefault();
         const currentName = nameInput.value.trim();
-        const currentComment = commentInput.value.trim();
+        const currentComment = cleanHtml(commentInput.value.trim());
 
         if (!currentName || !currentComment) {
           alert('Пожалуйста, заполните все поля');
@@ -120,10 +143,11 @@
         commentInput.value = '';
       });
 
-      // Инициализация при загрузке страницы
+      // Прорисовка комментариев при загрузке страницы
       updateComments();
     });
   </script>
+
 </body>
 
 </html>
