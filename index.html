@@ -120,6 +120,7 @@
       commentBtn.addEventListener('click', (event) => {
         event.preventDefault();
         const currentName = nameInput.value.trim();
+        currentName = cleanHtml(currentName);
         const currentComment = cleanHtml(commentInput.value.trim());
 
         if (!currentName || !currentComment) {
