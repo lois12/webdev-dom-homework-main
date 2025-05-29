@@ -84,8 +84,8 @@
       function replyToComment(commentId) {
         const comment = commentsArray.find(c => c.id === commentId);
         if (comment) {
-          nameInput.value = comment.name;
-          commentInput.value = `${comment.name}: ${cleanHtml(comment.text)}\n\n`;
+          nameInput.value = "";
+          commentInput.value = ` ${cleanHtml(comment.text)}\n\n`;
           commentInput.focus();
         }
       }
@@ -120,7 +120,7 @@
       commentBtn.addEventListener('click', (event) => {
         event.preventDefault();
         const currentName = nameInput.value.trim();
-        currentName = cleanHtml(currentName);
+
         const currentComment = cleanHtml(commentInput.value.trim());
 
         if (!currentName || !currentComment) {
