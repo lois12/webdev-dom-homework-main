@@ -1,3 +1,7 @@
 {
-    "liveServer.settings.port": 5501
+    "liveServer.settings.port": 5501,
+    "liveServer.settings.CustomBrowser": "chrome",
+    "prettier.bracketSameLine": false,
+    "prettier.jsxSingleQuote": false,
+    "prettier.prettierPath": ""
 }
