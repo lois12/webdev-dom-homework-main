@@ -5,28 +5,48 @@ import { updateComments } from "./update_comments.js";
 
 function addNewComment(event) {
     event.preventDefault();
+    console.log("Кликая по кнопке комментирования...");
+
     const currentName = nameInput.value.trim();
     const currentComment = cleanHtml(commentInput.value.trim());
 
-    if (!currentName || !currentComment) {
-        alert("Пожалуйста, заполните все поля");
+    if (currentName.length < 3 || currentComment.length < 3) {
+        alert("Имя и текст комментария должны содержать минимум 3 символа");
         return;
     }
 
     const newComment = {
-        id: Date.now(),
-        name: currentName,
         text: currentComment,
-        date: getCurrentDate(),
-        likes: 0,
-        isLiked: false,
+        name: currentName
     };
 
-    commentsArray.push(newComment);
-    updateComments();
+    console.log("Отправляемый объект:", newComment);
 
-    nameInput.value = "";
-    commentInput.value = "";
+    fetch('https://wedev-api.sky.pro/api/v1/qwerty/comments', {
+        method: "POST",
+      
+        body: JSON.stringify(newComment),
+    })
+    .then(response => {
+        if (!response.ok) {
+        
+            response.text().then(bodyText => {
+                console.error("Ошибка сервера:", response.status, bodyText);
+            });
+            throw new Error('Ошибка сервера');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Комментарий успешно отправлен:", data);
+        updateComments(); // 
+        nameInput.value = "";
+        commentInput.value = "";
+    })
+    .catch(error => {
+        console.error("Ошибка при отправке комментария:", error.message);
+        alert("Возникла ошибка при отправке комментария.");
+    });
 }
 
 function likeComment(event) {
@@ -48,10 +68,11 @@ function replyToComment(commentId) {
     const comment = commentsArray.find((c) => c.id === commentId);
     if (comment) {
         nameInput.value = "";
-        commentInput.value = ` ${cleanHtml(comment.text)}\n\n`;
+        commentInput.value = `${cleanHtml(comment.text)}\n\n`;
         commentInput.focus();
     }
 }
+
 export function initEvents() {
     commentBtn.addEventListener("click", addNewComment);
     commentList.addEventListener("click", (event) => {
@@ -64,3 +85,5 @@ export function initEvents() {
     });
     commentList.addEventListener("click", likeComment);
 }
+initEvents()
+
