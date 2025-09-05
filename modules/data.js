@@ -1,1 +1,1 @@
-export const commentsArray = [];
+export let commentsArray = [];

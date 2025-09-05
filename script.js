@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+/* document.addEventListener("DOMContentLoaded", () => {
     const commentsArray = [
         {
             id: 1,
@@ -126,3 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Прорисовка комментариев при загрузке страницы
     updateComments();
 });
+
+
+
+    
+ */
